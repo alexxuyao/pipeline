@@ -20,23 +20,23 @@ import "github.com/wuxicn/pipeline"
 
 func main() {
 
-    u, err := user.Current()
-    if err != nil {
-        fmt.Println("get current user failed: %v", err)
+    u, e := user.Current()
+    if e != nil {
+        fmt.Println("get current user failed: %v", e)
         os.Exit(255)
     }
 
-    stdout, stderr, err := pipeline.Run(
+    _, stderr, err := pipeline.Run(
         exec.Command("ls", "-alh", u.HomeDir), // list files
         exec.Command("tr", "a-z", "A-Z"),      // to upper-case
         exec.Command("./exit_non_zero.sh"),    // exit with non-zero
         exec.Command("nl"))                    // add line number
 
-    fmt.Println("STDOUT:")
-    fmt.Println(stdout.String())
-    fmt.Println("--------------")
     fmt.Println("STDERR:")
     fmt.Println(stderr.String())
-    fmt.Println("--------------")
-    fmt.Println("ERR:", err)
+
+    if err != nil {
+        e := err.(*pipeline.Error)
+        fmt.Println("ERR:", e.Code, e.Err)
+    }
 }

@@ -34,9 +34,12 @@ func main() {
 
     fmt.Println("STDOUT:")
     fmt.Println(stdout.String())
-    fmt.Println("--------------")
+
     fmt.Println("STDERR:")
     fmt.Println(stderr.String())
-    fmt.Println("--------------")
-    fmt.Println("ERR:", err)
+
+    if err != nil {
+        e := err.(*pipeline.Error)
+        fmt.Println("ERR:", e.Code, e.Err)
+    }
 }
